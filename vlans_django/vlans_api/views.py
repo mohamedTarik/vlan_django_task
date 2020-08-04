@@ -19,17 +19,17 @@ class Vlans_APIS(viewsets.ViewSet):
 
 	def list(self,request):
 		"""Sync from DB to switch"""
+
 		queryset = Vlans.objects.all()
 		serializer = self.serializer_class(queryset, many=True)
 		for v_object in serializer.data:
 
-			print(v_object['vlan_name'])
 			config_comands = ['set vlans ' + v_object['vlan_name'] + ' vlan-id ' + v_object['vlan_id']]
 			self.conn.send_config_set(config_comands,exit_config_mode=False)
+			print(config_comands)
 
-			'''REST conf is not Working With this Juniper Switch'''
+			''' RESTconf/Netconf/SNMP is not Working With this Juniper Switch (SYNC)'''
 			'''SNMP is not working because of VPN tunnel i think'''
-
 
 		return Response(serializer.data)
 
